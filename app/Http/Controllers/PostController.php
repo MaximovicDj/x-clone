@@ -47,6 +47,7 @@ class PostController extends Controller
      */
     public function store(CreatePostRequest $request)
     {
+        // just to test
         DB::transaction(function () use ($request) {
             $post = Post::create([
                 'content' => $request->input('content'),
