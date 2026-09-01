@@ -23,7 +23,7 @@ const emit = defineEmits([
         class="relative group aspect-square rounded-lg overflow-hidden bg-gray-800 border border-gray-700"
     >
         <img
-            :src="typeof src === 'object' && src.link ? src.link : src"
+            :src="typeof src === 'object' && src.path ? src.path : src"
             :alt="`Preview ${index + 1}`"
             class="w-full h-full object-cover"
         />
