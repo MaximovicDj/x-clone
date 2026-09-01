@@ -7,9 +7,6 @@ const props = defineProps({
     images: Array
 })
 
-// console.log(props.images)
-
-
 const galleryImages = computed(() => {
     if(!props.images.length) return [];
 
@@ -19,8 +16,6 @@ const galleryImages = computed(() => {
         thumbnailImageSrc: img.path
     }));
 });
-
-console.log(galleryImages.value)
 
 </script>
 

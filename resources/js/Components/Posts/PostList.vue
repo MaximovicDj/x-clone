@@ -1,5 +1,4 @@
 <script setup>
-import {computed, onMounted, ref} from 'vue'
 import PostItem from "@/Components/Posts/PostItem.vue";
 
 const props = defineProps({

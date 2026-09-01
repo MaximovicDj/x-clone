@@ -19,8 +19,7 @@ class PostImagesResource extends JsonResource
             'id' => $this->id,
             'post_id' => $this->post_id,
             'path_name' => $this->path_name,
-            'path' => 'storage/'. $this->path_name,
-            'link' => Storage::url($this->path_name)
+            'path' => Storage::url($this->path_name),
         ];
     }
 }
