@@ -9,6 +9,8 @@ const props = defineProps({
     user: Object
 })
 
+const userData = props.user.data;
+
 const showProfile = ref(true)
 const showPosts = ref(false)
 
@@ -38,22 +40,22 @@ const showPosts = ref(false)
         <div v-if="showProfile" class="max-w-4xl mx-auto px-4 py-10">
             <div class="flex items-center gap-4 mb-6">
                 <div class="w-20 h-20 rounded-full bg-blue-500 flex items-center justify-center text-2xl font-bold text-white">
-                    {{ user.name.charAt(0) }}{{ user.last_name.charAt(0) }}
+                    {{ userData.name.charAt(0) }}{{ userData.last_name.charAt(0) }}
                 </div>
                 <div>
-                    <h1 class="text-2xl font-bold text-white">{{ user.name }} {{ user.last_name }}</h1>
-                    <p class="text-gray-400">{{ user.email }}</p>
+                    <h1 class="text-2xl font-bold text-white">{{ userData.name }} {{ userData.last_name }}</h1>
+                    <p class="text-gray-400">{{ userData.email }}</p>
                 </div>
             </div>
 
             <div class="mb-6">
-                <p class="text-gray-300 leading-relaxed">{{ user.bio || 'No bio yet.' }}</p>
+                <p class="text-gray-300 leading-relaxed">{{ userData.bio || 'No bio yet.' }}</p>
             </div>
 
             <div class="flex gap-8 border-t border-gray-700 pt-4">
                 <div>
                     <span class="text-gray-400 text-sm">Posts</span>
-                    <p class="text-white font-semibold text-lg">{{ user.posts.length }}</p>
+                    <p class="text-white font-semibold text-lg">{{ userData.posts.length }}</p>
                 </div>
                 <div>
                     <span class="text-gray-400 text-sm">Following</span>
@@ -66,12 +68,12 @@ const showPosts = ref(false)
             </div>
 
             <div class="mt-4 text-gray-400 text-sm">
-                Joined {{ new Date(user.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) }}
+                Joined {{ new Date(userData.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) }}
             </div>
         </div>
 
         <div v-if="showPosts" class="mt-8">
-            <PostList :data="user.posts"/>
+            <PostList :data="userData.posts"/>
         </div>
 
     </AuthenticatedLayout>

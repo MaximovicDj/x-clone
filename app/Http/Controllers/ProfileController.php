@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Http\Resources\PostResource;
+use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
@@ -65,9 +67,13 @@ class ProfileController extends Controller
     public function show(User $user): Response
     {
         return Inertia::render('Profile/Show', [
-           'user' => $user->load(['posts' => function ($query) {
-               $query->latest()->with('images', 'tags', 'user');
-           }]),
+            'user' => new UserResource(
+                $user->load([
+                    'posts' => function ($query) {
+                        $query->latest()->with(['images', 'tags', 'user']);
+                    },
+                ])
+            ),
         ]);
     }
 }

@@ -13,25 +13,6 @@ const emit = defineEmits([
     'remove'
 ])
 
-onMounted(() => {
-    // forEach - vidi svaki src i index
-        props.previews.forEach((src, index) => {
-            // console.log(src)
-            // console.log(`Index ${index}:`, src)
-            // console.log(`Slika ${index + 1}: ${src}`)
-        })
-
-    // Ili kroz for petlju
-    // for (let i = 0; i < props.previews.length; i++) {
-    //     console.log(`[${i}] = ${props.previews[i]}`)
-    // }
-    //
-    // // Ili for...of sa indeksom
-    // for (const [index, src] of props.previews.entries()) {
-    //     console.log(`Entry ${index}:`, src)
-    // }
-})
-
 </script>
 
 <template>
