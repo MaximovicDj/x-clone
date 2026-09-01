@@ -5,6 +5,8 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
 import Textarea from "@/Components/Textarea.vue";
+import {useToast} from "@/Composables/useToast.js";
+import {useFlashMessages} from "@/Composables/useFlashMessages.js";
 
 defineProps({
     mustVerifyEmail: {
@@ -24,6 +26,17 @@ const form = useForm({
     bio: user.bio ?? ''
 });
 
+const { toastAlert } = useToast()
+const { successMessage } = useFlashMessages()
+
+const submit = () => {
+    form.patch(route('profile.update'), {
+        onSuccess: () => {
+            toastAlert(successMessage.value, 'success')
+        }
+    })
+}
+
 </script>
 
 <template>
@@ -39,7 +52,7 @@ const form = useForm({
         </header>
 
         <form
-            @submit.prevent="form.patch(route('profile.update'))"
+            @submit.prevent="submit"
             class="mt-6 space-y-6"
         >
             <div>
