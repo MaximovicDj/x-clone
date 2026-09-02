@@ -21,9 +21,7 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'bio' => $this->bio,
             'slug' => $this->slug,
-            'posts' => PostResource::collection(
-                $this->whenLoaded('posts')
-            ),
+            'posts_count' => $this->whenCounted('posts')
         ];
     }
 }

@@ -26,7 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->respond(function (Response $response, Throwable $exception, Request $request) {
             // Only modify responses for production environment and successful fallback status codes
-            if (app()->environment('local') && in_array($response->getStatusCode(), [500, 503, 404, 403])) {
+            if (!app()->environment('local') && in_array($response->getStatusCode(), [500, 503, 404, 403])) {
                 return Inertia::render('Error', [
                     'status' => $response->getStatusCode(),
                 ])

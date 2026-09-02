@@ -8,7 +8,6 @@ import {Link} from "@inertiajs/vue3";
 const props = defineProps({
     post: Object
 })
-
 const isExpanded = ref(false)
 
 const shouldSlice = computed(() => {

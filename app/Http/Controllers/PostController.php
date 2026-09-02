@@ -23,12 +23,9 @@ class PostController extends Controller
      */
     public function index()
     {
-        // TODO refactor PostController
-        //  make Service Controller where you put logic
-        $posts = Post::with('user', 'images', 'tags')->latest()->get();
-        return Inertia::render('Dashboard',
-            [
-                'posts' => PostResource::collection($posts),
+        $posts = Post::with('user', 'images', 'tags')->latest()->paginate(10);
+        return Inertia::render('Dashboard', [
+                'posts' => Inertia::scroll(fn () => PostResource::collection($posts)),
                 'tags' => TagResource::collection(Tag::all())
             ]);
     }
