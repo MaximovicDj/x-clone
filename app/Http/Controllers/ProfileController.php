@@ -66,14 +66,10 @@ class ProfileController extends Controller
 
     public function show(User $user): Response
     {
+        $posts = $user->posts()->with('user', 'images')->latest();
         return Inertia::render('Profile/Show', [
-            'user' => new UserResource(
-                $user->load([
-                    'posts' => function ($query) {
-                        $query->latest()->with(['images', 'tags', 'user']);
-                    },
-                ])
-            ),
+            'user' => new UserResource($user->loadCount('posts')),
+            'posts' => Inertia::scroll(fn () => PostResource::collection($posts->paginate(10))),
         ]);
     }
 }

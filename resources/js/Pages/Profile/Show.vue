@@ -6,7 +6,8 @@ import {ref} from "vue";
 import PostList from "@/Components/Posts/PostList.vue";
 
 const props = defineProps({
-    user: Object
+    user: Object,
+    posts: Object
 })
 
 const userData = props.user.data;
@@ -55,7 +56,7 @@ const showPosts = ref(false)
             <div class="flex gap-8 border-t border-gray-700 pt-4">
                 <div>
                     <span class="text-gray-400 text-sm">Posts</span>
-                    <p class="text-white font-semibold text-lg">{{ userData.posts.length }}</p>
+                    <p class="text-white font-semibold text-lg">{{ userData.posts_count }}</p>
                 </div>
                 <div>
                     <span class="text-gray-400 text-sm">Following</span>
@@ -73,7 +74,7 @@ const showPosts = ref(false)
         </div>
 
         <div v-if="showPosts" class="mt-8">
-            <PostList :data="userData.posts"/>
+            <PostList :posts="props.posts"/>
         </div>
 
     </AuthenticatedLayout>
