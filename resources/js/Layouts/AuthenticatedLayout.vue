@@ -8,10 +8,10 @@ import RightSidebar from "@/Layouts/RightSidebar.vue";
     <div class="bg-black min-h-screen">
         <div class="hidden lg:grid lg:grid-cols-[256px_1fr_320px] max-w-[1280px] mx-auto">
 
-            <!-- Leva kolona - Navigacija -->
+            <!-- Left sidebar, navigation -->
             <LeftSidebar />
 
-            <!-- Srednja kolona - Glavni sadržaj -->
+            <!-- Middle - main content -->
             <div class="min-h-screen border-r border-gray-800">
 <!--                TODO For you Page and Following-->
                 <div class="sticky top-0 z-10 bg-black/80 backdrop-blur-md border-b border-gray-800 px-4 py-3">
@@ -24,7 +24,7 @@ import RightSidebar from "@/Layouts/RightSidebar.vue";
                 </div>
             </div>
 
-            <!-- Desna kolona - Sidebar -->
+            <!-- Right sidebar -->
             <RightSidebar />
         </div>
     </div>

@@ -23,9 +23,7 @@ const data = defineProps({
             <div class="border-t border-b border-gray-800 p-6 py-2 my-12">
                 <PostList :posts="data.posts"  />
             </div>
-
         </div>
-
 
     </AuthenticatedLayout>
 </template>

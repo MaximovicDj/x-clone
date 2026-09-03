@@ -8,6 +8,5 @@ use Illuminate\Support\Facades\Route;
 //    return $request->user();
 //})->middleware('auth:sanctum');
 
-Route::get('/tags', [TagController::class, 'index']);
 
 

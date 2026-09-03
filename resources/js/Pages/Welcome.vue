@@ -1,5 +1,5 @@
 <script setup>
-import {App, Head, Link, useForm, usePage} from '@inertiajs/vue3';
+import {Head, Link, useForm, usePage} from '@inertiajs/vue3';
 import { ref } from 'vue';
 import InputError from "@/Components/InputError.vue";
 import Checkbox from "@/Components/Checkbox.vue";
@@ -52,8 +52,6 @@ const toggleForms = () => {
 
 <template>
     <Head title="Welcome" />
-
-<!--    bg-gray-50 text-black/50 dark:bg-black dark:text-white/50-->
 
     <div class="bg-black/100">
         <div class="relative flex min-h-screen flex-col items-center justify-center selection:bg-[#FF2D20] selection:text-white">

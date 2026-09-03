@@ -8,10 +8,11 @@ use App\Http\Resources\PostResource;
 use App\Http\Resources\TagResource;
 use App\Models\Post;
 use App\Models\Tag;
+use App\Services\PostService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
+use Inertia\Response;
 use Throwable;
 
 class PostController extends Controller
@@ -19,134 +20,84 @@ class PostController extends Controller
     use AuthorizesRequests;
 
     /**
-     * Display a listing of the resource.
+     * @param PostService $postService
      */
-    public function index()
+    public function __construct(protected PostService $postService){}
+
+    /**
+     * @return Response
+     */
+    public function index(): Response
     {
-        $posts = Post::with('user', 'images', 'tags')->latest()->paginate(10);
         return Inertia::render('Dashboard', [
-                'posts' => Inertia::scroll(fn () => PostResource::collection($posts)),
-                'tags' => TagResource::collection(Tag::all())
+                'posts' => Inertia::scroll(fn () => PostResource::collection(
+                    Post::getPosts()->paginate(10)
+                )),
+                'tags' => TagResource::collection(Tag::select('id', 'name')->get())
             ]);
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
+     * @param CreatePostRequest $request
+     * @return RedirectResponse
      * @throws Throwable
      */
-    public function store(CreatePostRequest $request)
+    public function store(CreatePostRequest $request): RedirectResponse
     {
-        // just to test
-        DB::transaction(function () use ($request) {
-            $post = Post::create([
-                'content' => $request->input('content'),
-                'user_id' => auth()->id()
-            ]);
-            if($request->hasFile('images'))
-            {
-                foreach($request->file('images') as $image)
-                {
-                    $path = $image->store('posts', 'public');
-                    $post->images()->create([
-                        'path_name' => $path
-                    ]);
-                }
-            }
-            if($request->tags)
-            {
-                $post->tags()->attach(
-                    collect($request->tags)->pluck('id')
-                );
-            }
-        });
-
-        return redirect()->back()->with('success', 'Post created');
+        $this->postService->store(
+            $request->validated(),
+            $request->user()
+        );
+        return redirect()->back()
+            ->with('success', 'Post created');
     }
 
     /**
-     * Display the specified resource.
+     * @param Post $post
+     * @return Response
      */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Post $post)
+    public function edit(Post $post): Response
     {
         $this->authorize('view', $post);
-        $tags = Tag::all();
+
         return Inertia::render('Post/UpdatePost', [
             'post' => new PostResource($post->load('tags', 'images', 'user')),
-            'tags' => TagResource::collection($tags)
+            'tags' => TagResource::collection(Tag::select('id', 'name')->get())
         ]);
     }
 
     /**
-     * Update the specified resource in storage.
+     * @param UpdatePostRequest $request
+     * @param Post $post
+     * @return RedirectResponse
      * @throws Throwable
      */
-    public function update(UpdatePostRequest $request, Post $post)
+    public function update(UpdatePostRequest $request, Post $post): RedirectResponse
     {
         $this->authorize('update', $post);
 
-        DB::transaction(function () use ($request, $post) {
-            $post->update($request->validated());
-            $post->tags()->sync(
-                collect($request->tags)->pluck('id')
-            );
+        $this->postService->update(
+            $request->validated(),
+            $post
+        );
 
-
-            if($request->existingImages)
-            {
-                $existingImages = collect($request->existingImages)->pluck('id');
-                $existingImagesToDelete = $post->images()->whereNotIn('id', $existingImages)->get();
-                foreach($existingImagesToDelete as $existingImage)
-                {
-                    Storage::disk('public')->delete($existingImage->path_name);
-                    $existingImage->delete();
-                }
-            }
-
-            if($request->hasFile('images'))
-            {
-                foreach($request->file('images') as $image)
-                {
-                    $path = $image->store('posts', 'public');
-                    $post->images()->create([
-                        'path_name' => $path
-                    ]);
-                }
-            }
-
-        });
-
-        return redirect()->back()->with('success', 'Post updated');
+        return redirect()->back()
+            ->with('success', 'Post updated');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * @param Post $post
+     * @return RedirectResponse
      */
-    public function destroy(Post $post)
+    public function destroy(Post $post): RedirectResponse
     {
         $this->authorize('delete', $post);
 
-        foreach($post->images as $image)
-        {
-            Storage::disk('public')->delete($image->path_name);
-        }
+        $this->postService->delete(
+            $post
+        );
 
-        $post->delete();
-        return redirect()->back()->with('success', 'Post deleted');
+        return redirect()->back()
+            ->with('success', 'Post deleted');
     }
 }
