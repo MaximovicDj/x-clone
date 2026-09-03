@@ -40,6 +40,22 @@ class Post extends Model
     }
 
     /**
+     * @return BelongsToMany
+     */
+    public function likes(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'post_likes');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isLiked(): bool
+    {
+        return $this->likes()->where('user_id', auth()->id())->exists();
+    }
+
+    /**
      * @param $query
      * @return mixed
      */
@@ -47,6 +63,6 @@ class Post extends Model
     {
         return $query->with(
             ['user', 'tags', 'images']
-        )->latest();
+        )->withCount('likes')->latest();
     }
 }

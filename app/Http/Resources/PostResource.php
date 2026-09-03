@@ -20,7 +20,9 @@ class PostResource extends JsonResource
             'created_at' => $this->created_at->diffForHumans(short: true),
             'images' => PostImagesResource::collection($this->whenLoaded('images')),
             'tags' => TagResource::collection($this->whenLoaded('tags')),
-            'user' => new UserResource($this->whenLoaded('user'))
+            'user' => new UserResource($this->whenLoaded('user')),
+            'likes_count' => $this->whenCounted('likes'),
+            'is_liked' => $this->isLiked()
         ];
     }
 }

@@ -22,6 +22,21 @@ const content = computed(() => {
     return isExpanded.value ? props.post.content : props.post.content.slice(0, 100)
 })
 
+const isLiked = ref(props.post.is_liked)
+
+const likePost = async () => {
+    isLiked.value = !isLiked.value;
+    try {
+        const response = await axios.post(`api/like-post/${props.post.id}`)
+        isLiked.value = response.data.liked
+        props.post.likes_count = response.data.likedCount
+    }
+    catch (error) {
+        isLiked.value = !isLiked.value;
+        console.log(error)
+    }
+}
+
 </script>
 
 <template>
@@ -69,6 +84,33 @@ const content = computed(() => {
             </div>
 
             <PostGallery :images="props.post.images" />
+
+            <div @click="likePost()"
+                class="flex mt-2">
+                <svg v-if="!isLiked"
+                    width="24" height="24" viewBox="0 0 24 24" fill="black" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M12 21s-8-4.35-10.5-9.5C-0.5 6.5 3 3 7 3c2.2 0 4 1.2 5 3 1-1.8 2.8-3 5-3 4 0 7.5 3.5 5.5 8.5C20 16.65 12 21 12 21Z"
+                        stroke="white"
+                        stroke-width="1.5"
+                        stroke-linejoin="round"
+                    />
+                </svg>
+
+                <svg v-if="isLiked"
+                    width="24" height="24" viewBox="0 0 24 24" fill="#ef6b6b" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M12 21s-8-4.35-10.5-9.5C-0.5 6.5 3 3 7 3c2.2 0 4 1.2 5 3 1-1.8 2.8-3 5-3 4 0 7.5 3.5 5.5 8.5C20 16.65 12 21 12 21Z"
+                        stroke="#ef6b6b"
+                        stroke-width="1.5"
+                        stroke-linejoin="round"
+                    />
+                </svg>
+                <span class="ml-2">
+                    <span>{{ post.likes_count }}</span>
+                </span>
+            </div>
+
         </div>
     </div>
 </template>
