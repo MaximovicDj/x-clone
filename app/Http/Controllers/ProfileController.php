@@ -64,6 +64,10 @@ class ProfileController extends Controller
         return Redirect::to('/');
     }
 
+    /**
+     * @param User $user
+     * @return Response
+     */
     public function show(User $user): Response
     {
         $posts = $user->posts()->with('user', 'images')->latest();

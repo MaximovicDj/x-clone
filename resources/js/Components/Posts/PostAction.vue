@@ -5,7 +5,7 @@ import {
     PopoverTrigger,
 } from '@/components/ui/popover'
 import PostDelete from "@/Components/Posts/PostDelete.vue";
-import {computed, onMounted, ref} from "vue";
+import {ref} from "vue";
 import {Pencil} from "@lucide/vue";
 import {Link, usePage} from "@inertiajs/vue3";
 
