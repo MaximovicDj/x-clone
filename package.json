@@ -23,7 +23,7 @@
     },
     "dependencies": {
         "@ckeditor/ckeditor5-vue": "^8.1.1",
-        "@lucide/vue": "^1.32.0",
+        "@lucide/vue": "^1.41.0",
         "@tinymce/tinymce-vue": "^6.3.0",
         "@tiptap/extension-bubble-menu": "^3.26.1",
         "@tiptap/extension-image": "^3.26.1",
@@ -39,7 +39,7 @@
         "lucide-vue-next": "^1.0.0",
         "primevue": "^5.0.0",
         "quill-emoji": "^0.2.0",
-        "reka-ui": "^2.10.3",
+        "reka-ui": "^2.10.4",
         "tailwind-merge": "^3.6.0",
         "vue-multiselect": "^3.5.0",
         "vue-wysiwyg": "^1.7.2",

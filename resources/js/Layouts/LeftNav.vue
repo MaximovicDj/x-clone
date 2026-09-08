@@ -39,7 +39,6 @@ const user = usePage().props.auth.user;
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 16l4-4m0 0l-4-4m4 4H9m4 8H7a2 2 0 01-2-2V6a2 2 0 012-2h6"/>
         </svg>
         <span>Logout</span>
-        <span class="text-sm text-gray-300">{{ user.email }}</span>
     </Link>
 </template>
 

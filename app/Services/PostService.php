@@ -99,7 +99,7 @@ class PostService
     private function attachTags(array $data, Post $post): void
     {
         $post->tags()->attach(
-            collect($data['tags'])->pluck('id')
+            collect($data)->pluck('id')
         );
     }
 

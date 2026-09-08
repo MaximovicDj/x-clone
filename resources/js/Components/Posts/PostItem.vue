@@ -1,9 +1,10 @@
 <script setup>
-import {computed, ref} from "vue";
+import {computed, onMounted, ref} from "vue";
 import PostGallery from "@/Components/Posts/PostGallery.vue";
 import PostAction from "@/Components/Posts/PostAction.vue";
 import PostTagsItem from "@/Components/Posts/PostTagsItem.vue";
 import {Link} from "@inertiajs/vue3";
+import CommentList from "@/Components/Comments/CommentList.vue";
 
 const props = defineProps({
     post: Object
@@ -37,6 +38,56 @@ const likePost = async () => {
     }
 }
 
+const showComments = ref(false)
+const comments = ref([])
+const nextPageUrl = ref(null)
+const commentsLoading = ref(false)
+
+const showPostComments = async () => {
+    showComments.value = !showComments.value
+
+    if(!showComments.value) return
+    if(comments.value.length > 0) return
+
+    await loadComments()
+}
+
+const loadComments = async (url = null) => {
+    if(commentsLoading.value) return
+    commentsLoading.value = true
+
+    try {
+        const response = await axios.get(
+            url ?? `/api/post/comments/${props.post.id}`
+        )
+
+        comments.value.push(...response.data.comments)
+        nextPageUrl.value = response.data.next_page_url
+    }
+    catch (error) {
+        console.log(error)
+    }
+    finally {
+        commentsLoading.value = false
+    }
+}
+
+const removeComment = (id) => {
+    comments.value = comments.value.filter(
+        comment => comment.id !== id
+    )
+
+    if (props.post.comments_count > 0) {
+        props.post.comments_count--
+    }
+}
+
+const handleCommentCreated = async () => {
+    comments.value = []
+    nextPageUrl.value = null
+    await loadComments()
+    props.post.comments_count++
+}
 </script>
 
 <template>
@@ -85,31 +136,51 @@ const likePost = async () => {
 
             <PostGallery :images="props.post.images" />
 
-            <div @click="likePost()"
-                class="flex mt-2">
-                <svg v-if="!isLiked"
-                    width="24" height="24" viewBox="0 0 24 24" fill="black" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                        d="M12 21s-8-4.35-10.5-9.5C-0.5 6.5 3 3 7 3c2.2 0 4 1.2 5 3 1-1.8 2.8-3 5-3 4 0 7.5 3.5 5.5 8.5C20 16.65 12 21 12 21Z"
-                        stroke="white"
-                        stroke-width="1.5"
-                        stroke-linejoin="round"
-                    />
-                </svg>
+            <div class="flex mt-2 items-center">
+                <div @click="likePost()"
+                     class="flex mt-2">
+                    <svg v-if="!isLiked"
+                         width="24" height="24" viewBox="0 0 24 24" fill="black" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M12 21s-8-4.35-10.5-9.5C-0.5 6.5 3 3 7 3c2.2 0 4 1.2 5 3 1-1.8 2.8-3 5-3 4 0 7.5 3.5 5.5 8.5C20 16.65 12 21 12 21Z"
+                            stroke="white"
+                            stroke-width="1.5"
+                            stroke-linejoin="round"
+                        />
+                    </svg>
 
-                <svg v-if="isLiked"
-                    width="24" height="24" viewBox="0 0 24 24" fill="#ef6b6b" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                        d="M12 21s-8-4.35-10.5-9.5C-0.5 6.5 3 3 7 3c2.2 0 4 1.2 5 3 1-1.8 2.8-3 5-3 4 0 7.5 3.5 5.5 8.5C20 16.65 12 21 12 21Z"
-                        stroke="#ef6b6b"
-                        stroke-width="1.5"
-                        stroke-linejoin="round"
-                    />
-                </svg>
-                <span class="ml-2">
+                    <svg v-if="isLiked"
+                         width="24" height="24" viewBox="0 0 24 24" fill="#ef6b6b" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M12 21s-8-4.35-10.5-9.5C-0.5 6.5 3 3 7 3c2.2 0 4 1.2 5 3 1-1.8 2.8-3 5-3 4 0 7.5 3.5 5.5 8.5C20 16.65 12 21 12 21Z"
+                            stroke="#ef6b6b"
+                            stroke-width="1.5"
+                            stroke-linejoin="round"
+                        />
+                    </svg>
+                </div>
+                <span class="ml-2 mt-2">
                     <span>{{ post.likes_count }}</span>
                 </span>
+
+                <svg
+                    @click="showPostComments()"
+                    class="ml-8 mt-2" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+                <span class="ml-1 mt-1">{{ post.comments_count }}</span>
             </div>
+
+            <CommentList
+                v-if="showComments"
+                :comments="comments"
+                :postId="post.id"
+                :nextPageUrl="nextPageUrl"
+                :loading="commentsLoading"
+                @load-more="loadComments"
+                @comment-deleted="removeComment"
+                @comment-created="handleCommentCreated"
+            />
 
         </div>
     </div>

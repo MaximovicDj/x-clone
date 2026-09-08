@@ -3,7 +3,8 @@ import PostItem from "@/Components/Posts/PostItem.vue";
 import {InfiniteScroll} from "@inertiajs/vue3";
 
 const props = defineProps({
-    posts: Object
+    posts: Object,
+    comments: Object
 })
 
 </script>
