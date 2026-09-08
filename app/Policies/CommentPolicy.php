@@ -8,10 +8,22 @@ use App\Models\User;
 class CommentPolicy
 {
     /**
-     * Determine whether the user can delete the model.
+     * @param User $user
+     * @param Comment $comment
+     * @return bool
      */
     public function delete(User $user, Comment $comment): bool
     {
         return $user->id === $comment->user_id;
-     }
+    }
+
+    /**
+     * @param User $user
+     * @param Comment $comment
+     * @return bool
+     */
+    public function update(User $user, Comment $comment): bool
+    {
+        return $user->id === $comment->user_id;
+    }
 }

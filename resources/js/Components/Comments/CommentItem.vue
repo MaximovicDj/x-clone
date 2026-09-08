@@ -1,6 +1,6 @@
 <script setup>
 
-import {Link, usePage} from "@inertiajs/vue3";
+import {Link, useForm, usePage} from "@inertiajs/vue3";
 import { router } from '@inertiajs/vue3'
 import {
     DropdownMenu,
@@ -20,16 +20,18 @@ import {
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import {ref} from "vue";
+import InputError from "@/Components/InputError.vue";
 
 const page = usePage();
 const user = page.props.auth.user;
 const showDialog = ref(false)
 
 const props = defineProps({
-    comment: Object
+    comment: Object,
+    postId: Number,
 })
 
-const emit = defineEmits(['deleted'])
+const emit = defineEmits(['deleted', 'updated'])
 
 const deleteComment = (id) => {
     router.delete(route('comments.destroy', id), {
@@ -40,6 +42,23 @@ const deleteComment = (id) => {
         }
     })
 }
+
+const editCommentForm = ref(false)
+const form = useForm({
+    comment: props.comment.comment
+})
+
+const editComment = (id) => {
+    form.post(route('comments.update', id), {
+        preserveScroll: true,
+        onSuccess: () => {
+            editCommentForm.value = false
+            emit('updated', id)
+        }
+    })
+}
+
+
 </script>
 
 <template>
@@ -71,15 +90,52 @@ const deleteComment = (id) => {
             </span>
             </div>
 
-            <p class="text-gray-200 text-sm leading-relaxed break-words">
+            <p
+                v-if="!editCommentForm"
+                class="text-gray-200 text-sm leading-relaxed break-words">
                 {{ comment.comment }}
             </p>
 
+            <div v-if="editCommentForm">
+                <form @submit.prevent="editComment(comment.id)">
+                    <textarea
+                        rows="2"
+                        v-model="form.comment"
+                        class="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-4 py-2.5 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all resize-y min-h-[60px] max-h-32"
+                    ></textarea>
+                    <InputError
+                        :message="form.errors.comment"
+                        class="mt-1"
+                    />
+                    <div class="flex justify-end mt-2">
+                        <button
+                            type="submit"
+                            class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+                        >
+                            Edit
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+
+
+
             <div class="flex items-center gap-4 mt-2">
-                <button class="text-xs text-gray-500 hover:text-blue-400 transition-colors">
-                    Odgovori
+                <button
+                    class="text-xs text-gray-500 hover:text-blue-400 transition-colors">
+                    Replay...
                 </button>
             </div>
+
+<!--            show replies div -->
+<!--            <div class="ml-6 mt-2">-->
+<!--                <textarea-->
+<!--                    rows="1"-->
+<!--                    placeholder="Replay.."-->
+<!--                    class="w-full bg-gray-800/50 border border-gray-700/50 rounded-lg px-3 py-2 text-white text-sm placeholder-gray-500 focus:outline-none focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all resize-none"-->
+<!--                ></textarea>-->
+<!--            </div>-->
         </div>
 
         <div>
@@ -109,7 +165,7 @@ const deleteComment = (id) => {
             </DropdownMenuTrigger>
 
             <DropdownMenuContent class="bg-black border border-gray-800 text-white" >
-                <DropdownMenuItem class="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white cursor-pointer">
+                <DropdownMenuItem @click="editCommentForm = !editCommentForm" class="text-white hover:bg-gray-800 focus:bg-gray-800 focus:text-white cursor-pointer">
                     Edit
                 </DropdownMenuItem>
                 <DropdownMenuItem @click="showDialog = true" class="text-red-500 hover:bg-gray-800 focus:bg-gray-800 focus:text-red-500 cursor-pointer">

@@ -88,6 +88,12 @@ const handleCommentCreated = async () => {
     await loadComments()
     props.post.comments_count++
 }
+
+const handleCommentUpdated = async () => {
+    comments.value = []
+    nextPageUrl.value = null
+    await loadComments()
+}
 </script>
 
 <template>
@@ -180,6 +186,7 @@ const handleCommentCreated = async () => {
                 @load-more="loadComments"
                 @comment-deleted="removeComment"
                 @comment-created="handleCommentCreated"
+                @comment-updated="handleCommentUpdated"
             />
 
         </div>
