@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\CommentRequest;
+use App\Http\Requests\UpdateCommentRequest;
 use App\Models\Comment;
 use App\Models\Post;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -21,6 +22,14 @@ class CommentController extends Controller
         auth()->user()->comments()->create([
             'comment' => $request->comment,
             'post_id' => $post->id
+        ]);
+    }
+
+    public function update(Comment $comment, UpdateCommentRequest $request): void
+    {
+        $this->authorize('update', $comment);
+        $comment->update([
+            'comment' => $request->comment
         ]);
     }
 

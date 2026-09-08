@@ -24,6 +24,7 @@ Route::middleware('auth')->group(function () {
 
     Route::post('comments/{post}', [CommentController::class, 'store'])->name('comments.store');
     Route::delete('comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
+    Route::post('post/comments/{comment}', [CommentController::class, 'update'])->name('comments.update');
 });
 
 require __DIR__.'/auth.php';

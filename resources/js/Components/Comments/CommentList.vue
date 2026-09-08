@@ -19,7 +19,8 @@ const props = defineProps({
 const emit = defineEmits([
     'load-more',
     'comment-deleted',
-    'comment-created'
+    'comment-created',
+    'comment-updated',
 ])
 
 const loadMore = () => {
@@ -29,6 +30,10 @@ const loadMore = () => {
 
 const deleteComment = (id) => {
     emit('comment-deleted', id)
+}
+
+const updatedComment = (id) => {
+    emit('comment-updated', id)
 }
 
 const handleCommentCreated = () => {
@@ -54,6 +59,7 @@ const handleCommentCreated = () => {
                 <CommentItem
                     :comment="comment"
                     @deleted="deleteComment"
+                    @updated="updatedComment"
                 />
             </div>
         </div>
