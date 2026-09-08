@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Inertia\Inertia;
+use Inertia\ScrollProp;
 
 class Post extends Model
 {
@@ -40,6 +42,14 @@ class Post extends Model
     }
 
     /**
+     * @return HasMany
+     */
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    /**
      * @return BelongsToMany
      */
     public function likes(): BelongsToMany
@@ -61,8 +71,12 @@ class Post extends Model
      */
     public function scopeGetPosts($query): mixed
     {
-        return $query->with(
-            ['user', 'tags', 'images']
-        )->withCount('likes')->latest();
+        return $query->with([
+                'user',
+                'tags',
+                'images',
+            ])
+            ->withCount(['comments', 'likes'])
+            ->latest();
     }
 }

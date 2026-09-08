@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Inertia\Inertia;
 
 class PostResource extends JsonResource
 {
@@ -22,6 +23,7 @@ class PostResource extends JsonResource
             'tags' => TagResource::collection($this->whenLoaded('tags')),
             'user' => new UserResource($this->whenLoaded('user')),
             'likes_count' => $this->whenCounted('likes'),
+            'comments_count' => $this->whenCounted('comments'),
             'is_liked' => $this->isLiked()
         ];
     }

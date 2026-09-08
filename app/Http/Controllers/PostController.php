@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\CreatePostRequest;
 use App\Http\Requests\UpdatePostRequest;
+use App\Http\Resources\CommentResource;
 use App\Http\Resources\PostResource;
 use App\Http\Resources\TagResource;
 use App\Models\Post;
@@ -13,6 +14,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
+use Inertia\ScrollProp;
 use Throwable;
 
 class PostController extends Controller
@@ -99,5 +101,14 @@ class PostController extends Controller
 
         return redirect()->back()
             ->with('success', 'Post deleted');
+    }
+
+    /**
+     * @param Post $post
+     * @return ScrollProp
+     */
+    public function getComments(Post $post): ScrollProp
+    {
+        return Inertia::scroll(fn () => CommentResource::collection($post->comments()->paginate(5)));
     }
 }
